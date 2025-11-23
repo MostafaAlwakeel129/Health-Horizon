@@ -56,8 +56,6 @@ def _create_input_field(field_id, label, input_type="number", placeholder="",
             id=field_id,
             type=input_type,
             placeholder=placeholder,
-            min=min_val,
-            max=max_val,
             step=step,
             className="mb-1",
             style={'padding': '0.4rem 0.5rem', 'fontSize': '0.9rem'}
@@ -115,18 +113,14 @@ patientLayout = dbc.Container([
                     style={'backgroundColor': '#f1f3f5', 'padding': '8px 10px'}
                 ),
                 dbc.CardBody([
-                    *_create_input_field('patient-age', 'Age', placeholder="Age",
-                                       min_val=1, max_val=120, step=1),
+                    *_create_input_field('patient-age', 'Age', placeholder="Age", step=1),
                     *_create_radio_field('patient-sex', 'Sex', RADIO_OPTIONS['sex'], inline=True),
                     *_create_input_field('patient-trestbps', 'Resting BP (mm Hg)',
-                                       placeholder="BP",
-                                       min_val=80, max_val=220, step=1),
+                                       placeholder="BP", step=1),
                     *_create_input_field('patient-chol', 'Cholesterol (mg/dl)',
-                                       placeholder="Cholesterol",
-                                       min_val=100, max_val=600, step=1),
+                                       placeholder="Cholesterol", step=1),
                     *_create_input_field('patient-thalachh', 'Max Heart Rate',
-                                       placeholder="Heart Rate",
-                                       min_val=60, max_val=220, step=1),
+                                       placeholder="Heart Rate", step=1),
                 ], style={'padding': '10px', 'minHeight': '500px'})
             ], className="mb-2", style={'marginBottom': '0.5rem !important'})
         ], width=True),
@@ -155,8 +149,7 @@ patientLayout = dbc.Container([
                 ),
                 dbc.CardBody([
                     *_create_input_field('patient-oldpeak', 'ST Depression',
-                                       placeholder="ST Depression",
-                                       min_val=0, max_val=10, step=0.1),
+                                       placeholder="ST Depression", step=0.1),
                     *_create_radio_field('patient-fbs', 'Fasting Blood Sugar > 120',
                                        RADIO_OPTIONS['fbs'], inline=True),
                     *_create_radio_field('patient-exang', 'Exercise Angina',

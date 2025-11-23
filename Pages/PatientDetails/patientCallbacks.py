@@ -24,6 +24,29 @@ FIELD_IDS = [
     'patient-exang', 'patient-oldpeak', 'patient-slope', 'patient-ca', 'patient-thal'
 ]
 
+# Field ranges for validation
+FIELD_RANGES = {
+    'age': (1, 120),
+    'sex': (0, 1),
+    'cp': (0, 3),
+    'trestbps': (50, 250),
+    'chol': (30, 1000),
+    'fbs': (0, 1),
+    'restecg': (0, 2),
+    'thalachh': (40, 220),
+    'exang': (0, 1),
+    'oldpeak': (0, 6.2),
+    'slope': (0, 2),
+    'ca': (0, 4),
+    'thal': (0, 3)
+}
+
+# Field keys corresponding to FIELD_NAMES
+FIELD_KEYS = [
+    'age', 'sex', 'cp', 'trestbps', 'chol', 'fbs', 'restecg',
+    'thalachh', 'exang', 'oldpeak', 'slope', 'ca', 'thal'
+]
+
 
 def _create_field_values_dict(age, sex, cp, trestbps, chol, fbs, restecg, 
                               thalachh, exang, oldpeak, slope, ca, thal):
@@ -38,6 +61,22 @@ def _create_field_values_dict(age, sex, cp, trestbps, chol, fbs, restecg,
 def _validate_inputs(inputs):
     """Validate that all inputs are provided. Returns list of missing field names."""
     return [name for name, value in zip(FIELD_NAMES, inputs) if value is None]
+
+
+def _validate_ranges(inputs):
+    """Validate that all inputs are within acceptable ranges. Returns list of out-of-range field errors."""
+    errors = []
+    for field_name, field_key, value in zip(FIELD_NAMES, FIELD_KEYS, inputs):
+        if value is not None:
+            min_val, max_val = FIELD_RANGES[field_key]
+            if value < min_val or value > max_val:
+                errors.append({
+                    'field': field_name,
+                    'value': value,
+                    'min': min_val,
+                    'max': max_val
+                })
+    return errors
 
 
 def _create_patient_data_dict(age, sex, cp, trestbps, chol, fbs, restecg,
@@ -87,20 +126,66 @@ def patientCallbacks(app):
         inputs = [age, sex, cp, trestbps, chol, fbs, restecg, thalachh,
                  exang, oldpeak, slope, ca, thal]
         
-        # Validate inputs
+        # Validate both missing fields and ranges
         missing_fields = _validate_inputs(inputs)
+        range_errors = _validate_ranges(inputs)
+        
+        # Create field values for restoration
+        field_values = _create_field_values_dict(age, sex, cp, trestbps, chol, fbs,
+                                                restecg, thalachh, exang, oldpeak,
+                                                slope, ca, thal)
+        
+        # If we have BOTH missing fields AND range errors, show combined message
+        if missing_fields and range_errors:
+            # Create missing fields message
+            missing_message = (f"Please fill in the missing field: {missing_fields[0]}"
+                             if len(missing_fields) == 1
+                             else f"Please fill in the missing fields: {', '.join(missing_fields)}")
+            
+            # Create range error messages
+            range_error_messages = [
+                html.P(f'The input for "{error["field"]}" is out of range, please input data in range of {error["min"]} and {error["max"]}')
+                for error in range_errors
+            ]
+            
+            return (
+                dbc.Alert([
+                    html.H5("Validation Errors", className="alert-heading"),
+                    html.P(missing_message, className="mb-1"),
+                    html.Hr(className="my-2"),
+                    html.H5("Range Errors:", className="alert-heading mb-1"),
+                    *range_error_messages
+                ], color="danger"),
+                previous_data,
+                field_values
+            )
+        
+        # If only missing fields (no range errors)
         if missing_fields:
             message = (f"Please fill in the missing field: {missing_fields[0]}"
                       if len(missing_fields) == 1
                       else f"Please fill in the missing fields: {', '.join(missing_fields)}")
             
-            field_values = _create_field_values_dict(age, sex, cp, trestbps, chol, fbs,
-                                                    restecg, thalachh, exang, oldpeak,
-                                                    slope, ca, thal)
             return (
                 dbc.Alert([
                     html.H5("Missing Information", className="alert-heading"),
                     html.P(message)
+                ], color="danger"),
+                previous_data,
+                field_values
+            )
+        
+        # If only range errors (no missing fields)
+        if range_errors:
+            error_messages = [
+                html.P(f'The input for "{error["field"]}" is out of range, please input data in range of {error["min"]} and {error["max"]}')
+                for error in range_errors
+            ]
+            
+            return (
+                dbc.Alert([
+                    html.H5("Invalid Input Range", className="alert-heading"),
+                    *error_messages
                 ], color="danger"),
                 previous_data,
                 field_values
@@ -115,9 +200,6 @@ def patientCallbacks(app):
         if previous_data and 'patient_data' in previous_data:
             if previous_data['patient_data'] == current_submission:
                 print("Duplicate submission detected")
-                field_values = _create_field_values_dict(age, sex, cp, trestbps, chol, fbs,
-                                                        restecg, thalachh, exang, oldpeak,
-                                                        slope, ca, thal)
                 return (
                     dbc.Alert([
                         html.H5("Patient Already Diagnosed", className="alert-heading"),
@@ -126,9 +208,6 @@ def patientCallbacks(app):
                     previous_data,
                     field_values
                 )
-        
-        # Disable button immediately to prevent double-click
-        # Button will be re-enabled after prediction completes or on error
         
         # Prepare features for prediction
         features = [age, sex, cp, trestbps, chol, fbs, restecg,
@@ -141,9 +220,6 @@ def patientCallbacks(app):
         
         if result is None:
             print("ERROR: Prediction returned None!")
-            field_values = _create_field_values_dict(age, sex, cp, trestbps, chol, fbs,
-                                                    restecg, thalachh, exang, oldpeak,
-                                                    slope, ca, thal)
             return (
                 dbc.Alert([
                     html.H5("Prediction Error", className="alert-heading"),
@@ -163,11 +239,6 @@ def patientCallbacks(app):
         
         print(f"Prediction complete: {stored_data['risk_level']}")
         print("=" * 50)
-        
-        # Create field values for restoration
-        field_values = _create_field_values_dict(age, sex, cp, trestbps, chol, fbs,
-                                                restecg, thalachh, exang, oldpeak,
-                                                slope, ca, thal)
         
         return (
             dbc.Alert([
