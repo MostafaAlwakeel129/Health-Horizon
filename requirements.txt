@@ -2,6 +2,12 @@ dash
 dash-bootstrap-components
 pandas
 numpy
-joblib
+matplotlib
+seaborn
+ydata-profiling
 scikit-learn
+xgboost
+mlxtend
+scipy
+joblib
 gunicorn
