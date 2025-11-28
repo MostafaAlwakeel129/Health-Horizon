@@ -15,6 +15,8 @@ from Pages.ResultsPage.resultsCallbacks import resultsCallbacks
 
 # Create the app
 app = dash.Dash(__name__, external_stylesheets=[dbc.themes.BOOTSTRAP], suppress_callback_exceptions=True)
+server = app.server
+
 
 # Single page layout combining all three sections
 app.layout = html.Div([
@@ -57,5 +59,5 @@ homeCallbacks(app)
 patientCallbacks(app)
 resultsCallbacks(app)
 
-if __name__ == '__main__':
-    app.run(debug=True, port=8050)
+if __name__ == "__main__":
+  app.run(debug=True)
