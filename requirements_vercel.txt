@@ -3,3 +3,5 @@ dash-bootstrap-components
 pandas
 numpy
 joblib
+scikit-learn
+gunicorn
