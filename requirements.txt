@@ -11,3 +11,5 @@ mlxtend
 scipy
 joblib
 gunicorn
+psycopg2-binary
+python-dotenv
