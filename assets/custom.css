@@ -900,64 +900,522 @@ html::before, body::before {
 /* ============================================
    RESPONSIVE DESIGN
    ============================================ */
+/* ============================================
+   MOBILE RESPONSIVE ADDITIONS
+   Add these styles to your existing custom.css
+   ============================================ */
 
+/* Fix for Major Vessels Dropdown - Apply to ALL screen sizes */
+.patient-details-section-wrapper .card {
+    overflow: visible !important;
+}
+
+.patient-details-section-wrapper .card-body {
+    overflow: visible !important;
+}
+
+.dropdown-wrapper {
+    position: relative;
+    z-index: 100;
+}
+
+.dropdown-wrapper .Select-menu-outer,
+.dropdown-wrapper .Select-menu {
+    z-index: 9999 !important;
+}
+
+/* Ensure dropdown appears above other cards */
+.patient-details-section-wrapper .row {
+    position: relative;
+    z-index: 1;
+}
+
+.patient-details-section-wrapper .col:has(.dropdown-wrapper) {
+    z-index: 10;
+    position: relative;
+}
+
+/* Style the dropdown menu */
+.Select-menu-outer {
+    max-height: 200px !important;
+    overflow-y: auto !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+    border-radius: 8px !important;
+    margin-top: 4px !important;
+}
+
+/* Tablet Landscape and Below (992px) */
 @media (max-width: 992px) {
+    /* Hero Section - Stack elements */
     .hero-section-new {
-        padding: 60px 20px;
+        padding: 60px 30px;
+        min-height: auto;
     }
     
     .hero-content-row {
         flex-direction: column;
-        gap: 40px;
+        gap: 30px;
+        min-height: auto;
     }
     
     .cta-left {
         text-align: center;
         justify-content: center;
+        padding: 20px 0;
     }
     
-    .patient-details-section-wrapper,
+    .hero-cta-text {
+        font-size: clamp(32px, 5vw, 42px);
+    }
+    
+    /* Remove absolute positioning on tablet */
+    .cta-right {
+        position: relative !important;
+        right: auto !important;
+        top: auto !important;
+        transform: none !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        padding: 20px 0 !important;
+        text-align: center;
+    }
+    
+    .team-text-container {
+        justify-content: center !important;
+        text-align: center !important;
+    }
+    
+    .team-info-container {
+        text-align: center !important;
+        align-items: center !important;
+    }
+    
+    .team-presented-text,
+    .team-name-text {
+        text-align: center !important;
+    }
+    
+    /* Patient Details - Reduce to 2-3 columns */
+    .patient-details-section-wrapper .row > .col {
+        flex: 0 0 50%;
+        max-width: 50%;
+    }
+    
+    .patient-details-section-wrapper {
+        padding: 60px 25px;
+    }
+    
+    .patient-details-section-wrapper .card-body {
+        padding: 16px;
+        min-height: auto !important;
+    }
+    
+    /* Results Section */
     .results-section-wrapper {
-        padding: 60px 20px;
+        padding: 60px 25px;
+    }
+    
+    .risk-display-box {
+        padding: 40px 30px;
+    }
+    
+    .results-section-wrapper .row > .col-4 {
+        flex: 0 0 100%;
+        max-width: 100%;
+        margin-bottom: 15px;
     }
 }
 
+/* Tablet Portrait and Below (768px) */
 @media (max-width: 768px) {
+    /* Header */
+    .heart-icon-top-container {
+        padding: 25px 15px 15px;
+    }
+    
+    .header-content {
+        gap: 15px;
+    }
+    
+    .ventro-logo-text {
+        font-size: clamp(28px, 4vw, 36px);
+    }
+    
+    #animated-heart-icon {
+        font-size: 42px;
+    }
+    
+    /* Hero Section */
     .hero-section-new {
-        padding: 40px 15px;
-        min-height: 90vh;
+        padding: 50px 20px;
+        min-height: auto;
     }
     
     .hero-cta-text {
         font-size: clamp(28px, 5vw, 36px);
+        letter-spacing: -0.5px;
+    }
+    
+    .team-presented-text {
+        font-size: clamp(12px, 1.5vw, 16px);
+    }
+    
+    .team-name-text {
+        font-size: clamp(28px, 5vw, 42px);
+    }
+    
+    .begin-assessment-btn {
+        padding: 16px 38px !important;
+        font-size: clamp(15px, 2vw, 17px);
+    }
+    
+    /* Patient Details - Full width cards on mobile */
+    .patient-details-section-wrapper .row > .col {
+        flex: 0 0 100%;
+        max-width: 100%;
+        margin-bottom: 15px;
+    }
+    
+    .patient-details-section-wrapper {
+        padding: 50px 20px;
+    }
+    
+    .patient-details-header {
+        font-size: 24px;
+        letter-spacing: 2px;
+        margin-bottom: 30px;
+    }
+    
+    .patient-details-section-wrapper .card {
+        margin-bottom: 15px;
+    }
+    
+    .patient-details-section-wrapper .card-header {
+        padding: 14px 18px !important;
+    }
+    
+    .patient-details-section-wrapper .card-header h5 {
+        font-size: 1rem;
+    }
+    
+    .patient-details-section-wrapper .card-body {
+        padding: 18px;
+    }
+    
+    .patient-details-section-wrapper .fw-bold {
+        font-size: 0.85rem;
+    }
+    
+    .patient-details-section-wrapper .form-control,
+    .patient-details-section-wrapper .form-select {
+        padding: 10px 14px;
+        font-size: 0.9rem;
+    }
+    
+    /* Radio buttons - stack vertically on mobile */
+    .radio-buttons .form-check.form-check-inline {
+        display: flex;
+        width: 100%;
+        margin-right: 0;
+        margin-bottom: 8px;
+    }
+    
+    .radio-buttons .form-check {
+        margin-bottom: 8px;
+    }
+    
+    .radio-buttons .form-check-label {
+        padding: 11px 14px;
+        font-size: 0.9rem;
+    }
+    
+    /* Predict Button */
+    #patient-button {
+        font-size: 1rem;
+        padding: 15px 35px;
+        max-width: 100%;
+        margin: 25px auto;
+    }
+    
+    /* Results Section */
+    .results-section-wrapper {
+        padding: 50px 20px;
+    }
+    
+    .report-header {
+        font-size: clamp(18px, 2.5vw, 22px);
+    }
+    
+    .risk-display-box {
+        padding: 35px 25px;
+        margin: 25px 0;
+    }
+    
+    .risk-display-box h3 {
+        font-size: 1.5rem;
+    }
+    
+    .risk-display-box h1 {
+        font-size: 3rem !important;
+    }
+    
+    .section-title {
+        font-size: 1.15rem;
+    }
+    
+    .results-section-wrapper .card-body p {
+        font-size: 0.9rem;
+    }
+    
+    /* Action buttons - stack on mobile */
+    .results-section-wrapper .row > .col-6 {
+        flex: 0 0 100%;
+        max-width: 100%;
+        margin-bottom: 10px;
+    }
+    
+    #new-assessment-button,
+    #export-report-button {
+        padding: 13px 24px;
+        font-size: 1rem;
+    }
+}
+
+/* Mobile Phones (576px and below) */
+@media (max-width: 576px) {
+    /* Header */
+    .heart-icon-top-container {
+        padding: 20px 12px 12px;
+    }
+    
+    .ventro-logo-text {
+        font-size: clamp(24px, 5vw, 32px);
+        letter-spacing: 1px;
+    }
+    
+    #animated-heart-icon {
+        font-size: 36px;
+    }
+    
+    /* Hero Section */
+    .hero-section-new {
+        padding: 40px 15px;
+        min-height: 80vh;
+    }
+    
+    .hero-content-row {
+        gap: 25px;
+    }
+    
+    .cta-left {
+        padding: 15px 0;
+    }
+    
+    .hero-cta-text {
+        font-size: clamp(24px, 6vw, 32px);
+        line-height: 1.35;
+        letter-spacing: -0.5px;
+    }
+    
+    .cta-right {
+        padding: 15px 0 !important;
+    }
+    
+    .team-presented-text {
+        font-size: 11px;
+        margin-bottom: 8px;
+        letter-spacing: 1px;
+    }
+    
+    .team-name-text {
+        font-size: clamp(24px, 6vw, 36px);
+        letter-spacing: -0.5px;
     }
     
     .begin-assessment-btn {
         padding: 14px 32px !important;
         font-size: 15px;
+        width: 100%;
+        max-width: 320px;
+    }
+    
+    /* Patient Details */
+    .patient-details-section-wrapper {
+        padding: 40px 15px;
     }
     
     .patient-details-header {
-        font-size: 22px;
+        font-size: 20px;
+        letter-spacing: 1.5px;
+        margin-bottom: 25px;
+        padding-bottom: 15px;
+    }
+    
+    .patient-details-header::after {
+        width: 60px;
+        height: 3px;
+    }
+    
+    .patient-details-section-wrapper .card {
+        border-radius: 12px;
+        margin-bottom: 12px;
+    }
+    
+    .patient-details-section-wrapper .card-header {
+        padding: 12px 16px !important;
+    }
+    
+    .patient-details-section-wrapper .card-header h5 {
+        font-size: 0.95rem;
     }
     
     .patient-details-section-wrapper .card-body {
-        padding: 20px;
+        padding: 16px;
     }
     
-    #animated-heart-icon {
-        font-size: 40px;
+    .patient-details-section-wrapper .fw-bold {
+        font-size: 0.8rem;
+        margin-bottom: 6px;
+    }
+    
+    .patient-details-section-wrapper .form-control,
+    .patient-details-section-wrapper .form-select {
+        padding: 9px 12px;
+        font-size: 0.85rem;
+        border-radius: 6px;
+    }
+    
+    /* Radio buttons - smaller on mobile */
+    .radio-buttons .form-check {
+        border-radius: 8px;
+        margin-bottom: 6px;
+    }
+    
+    .radio-buttons .form-check-label {
+        padding: 10px 12px;
+        font-size: 0.85rem;
+    }
+    
+    /* Predict Button */
+    #patient-button {
+        font-size: 0.95rem;
+        padding: 14px 30px;
+        border-radius: 10px;
+        margin: 20px auto;
+    }
+    
+    /* Results Section */
+    .results-section-wrapper {
+        padding: 40px 15px;
+    }
+    
+    .report-card {
+        border-radius: 12px;
+    }
+    
+    .report-card-header {
+        padding: 16px 18px !important;
+    }
+    
+    .report-header {
+        font-size: clamp(16px, 2.5vw, 20px);
+        line-height: 1.3;
+    }
+    
+    .report-card .card-body {
+        padding: 20px 16px;
+    }
+    
+    .risk-display-box {
+        padding: 30px 20px;
+        margin: 20px 0;
+        border-radius: 12px;
+    }
+    
+    .risk-display-box h3 {
+        font-size: 1.3rem;
+        margin-bottom: 20px;
+    }
+    
+    .risk-display-box h1 {
+        font-size: 2.5rem !important;
+        margin-bottom: 15px;
+    }
+    
+    .risk-display-box p {
+        font-size: 0.85rem;
+    }
+    
+    .section-title {
+        font-size: 1.05rem;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+    }
+    
+    .results-section-wrapper .card {
+        border-radius: 10px;
+        margin-bottom: 12px;
+    }
+    
+    .results-section-wrapper .card-body {
+        padding: 16px;
+    }
+    
+    .results-section-wrapper .card-body h6 {
+        font-size: 0.85rem;
+        margin-bottom: 12px;
+    }
+    
+    .results-section-wrapper .card-body p {
+        font-size: 0.85rem;
+        margin-bottom: 8px;
+    }
+    
+    .results-section-wrapper .row {
+        margin-bottom: 15px;
+    }
+    
+    /* Action buttons */
+    #new-assessment-button,
+    #export-report-button {
+        padding: 12px 22px;
+        font-size: 0.95rem;
+        border-radius: 8px;
+    }
+    
+    /* Alerts */
+    .alert {
+        border-radius: 10px;
+        padding: 16px 18px;
+        margin: 16px 0;
+    }
+    
+    .alert-heading {
+        font-size: 1rem;
+        margin-bottom: 8px;
+    }
+    
+    .alert p {
+        font-size: 0.85rem;
     }
 }
 
-@media (max-width: 576px) {
-    .hero-section-new {
-        padding: 30px 12px;
+/* Extra Small Phones (400px and below) */
+@media (max-width: 400px) {
+    .ventro-logo-text {
+        font-size: 22px;
+    }
+    
+    #animated-heart-icon {
+        font-size: 32px;
     }
     
     .hero-cta-text {
-        font-size: 24px;
-        line-height: 1.3;
+        font-size: 22px;
+    }
+    
+    .team-name-text {
+        font-size: 22px;
     }
     
     .begin-assessment-btn {
@@ -965,25 +1423,62 @@ html::before, body::before {
         font-size: 14px;
     }
     
+    .patient-details-header {
+        font-size: 18px;
+    }
+    
+    .risk-display-box h1 {
+        font-size: 2rem !important;
+    }
+}
+
+/* Landscape Mode Optimization for Phones */
+@media (max-height: 500px) and (orientation: landscape) {
+    .hero-section-new {
+        min-height: auto;
+        padding: 30px 20px;
+    }
+    
     .patient-details-section-wrapper,
     .results-section-wrapper {
-        padding: 40px 15px;
+        padding: 30px 20px;
+    }
+    
+    .hero-cta-text,
+    .team-name-text {
+        font-size: 24px;
+    }
+    
+    .risk-display-box {
+        padding: 25px 20px;
     }
 }
 
-/* ============================================
-   ACCESSIBILITY
-   ============================================ */
-
-.begin-assessment-btn:focus-visible,
-#patient-button:focus-visible {
-    outline: 2px solid var(--accent-primary);
-    outline-offset: 2px;
+/* Touch-friendly adjustments */
+@media (hover: none) and (pointer: coarse) {
+    /* Increase touch targets */
+    .begin-assessment-btn,
+    #patient-button,
+    #new-assessment-button,
+    #export-report-button {
+        min-height: 48px;
+    }
+    
+    .radio-buttons .form-check {
+        min-height: 48px;
+    }
+    
+    .radio-buttons .form-check-label {
+        min-height: 48px;
+        display: flex;
+        align-items: center;
+    }
+    
+    /* Remove hover effects on touch devices */
+    .begin-assessment-btn:hover::before,
+    #patient-button:hover::before,
+    #new-assessment-button:hover::before,
+    #export-report-button:hover::before {
+        display: none;
+    }
 }
-
-@media (prefers-reduced-motion: reduce) {
-    * {
-        animation: none !important;
-        transition: none !important;
-    }
-    }
