@@ -55,7 +55,7 @@ app.layout = html.Div([
     ], id='results-section-container', className="results-section-wrapper")
 ], className="main-app-container", style={'margin': '0', 'padding': '0'})
 
-# Register callbacks from all pages
+# Register callbacks from every pages
 homeCallbacks(app)
 patientCallbacks(app)
 resultsCallbacks(app)
