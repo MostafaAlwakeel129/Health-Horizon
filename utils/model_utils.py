@@ -1,4 +1,4 @@
-import joblib  # Change from pickle to joblib
+import joblib
 import pandas as pd
 import numpy as np
 import os
@@ -48,7 +48,8 @@ class HeartDiseasePredictor:
             
             try:
                 probability = self.model.predict_proba(scaled_features)[0]
-                risk_probability = probability[1]
+                # Convert NumPy float64 to Python float
+                risk_probability = float(probability[1])
             except:
                 risk_probability = None
             
