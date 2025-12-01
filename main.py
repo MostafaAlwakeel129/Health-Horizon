@@ -1,8 +1,14 @@
 import dash
 import os
+import psycopg2
 from dash import html, dcc
 import dash_bootstrap_components as dbc
 from dash.dependencies import Input, Output
+from dotenv import load_dotenv
+
+load_dotenv()  # this loads variables from .env
+DATABASE_URL = os.getenv("DATABASE_URL")
+print(os.getenv("DATABASE_URL"))  # just to check if it's loaded
 
 # Import layouts
 from Pages.HomePage.homeLayout import homeLayout
