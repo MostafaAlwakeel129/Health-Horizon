@@ -47,9 +47,9 @@ DROPDOWN_OPTIONS = {
 }
 
 
-def _create_input_field(field_id, label, input_type="number", placeholder="", 
+def _create_input_field(field_id, label, error_id, input_type="number", placeholder="", 
                         min_val=None, max_val=None, step=None):
-    """Create a standardized input field with compact spacing."""
+    """Create a standardized input field with compact spacing and inline error."""
     return [
         dbc.Label(label, className="fw-bold mb-0", style={'fontSize': '0.85rem'}),
         dbc.Input(
@@ -57,14 +57,22 @@ def _create_input_field(field_id, label, input_type="number", placeholder="",
             type=input_type,
             placeholder=placeholder,
             step=step,
-            className="mb-1",
+            className="mb-0",
             style={'padding': '0.4rem 0.5rem', 'fontSize': '0.9rem'}
-        )
+        ),
+        html.Div(id=error_id, className="field-error-message", style={
+            'color': '#dc2626',
+            'fontSize': '0.75rem',
+            'marginTop': '2px',
+            'marginBottom': '8px',
+            'fontWeight': '500',
+            'minHeight': '18px'
+        })
     ]
 
 
-def _create_radio_field(field_id, label, options, inline=False):
-    """Create a standardized radio button field with compact spacing."""
+def _create_radio_field(field_id, label, error_id, options, inline=False):
+    """Create a standardized radio button field with compact spacing and inline error."""
     return [
         dbc.Label(label, className="fw-bold mb-0", style={'fontSize': '0.85rem', 'display': 'block', 'marginBottom': '0.3rem'}),
         dbc.RadioItems(
@@ -72,14 +80,22 @@ def _create_radio_field(field_id, label, options, inline=False):
             options=options,
             value=None,
             inline=inline,
-            className="mb-1 radio-buttons",
+            className="mb-0 radio-buttons",
             style={'fontSize': '0.9rem'}
-        )
+        ),
+        html.Div(id=error_id, className="field-error-message", style={
+            'color': '#dc2626',
+            'fontSize': '0.75rem',
+            'marginTop': '4px',
+            'marginBottom': '8px',
+            'fontWeight': '500',
+            'minHeight': '18px'
+        })
     ]
 
 
-def _create_dropdown_field(field_id, label, options, placeholder=""):
-    """Create a standardized dropdown field with compact spacing."""
+def _create_dropdown_field(field_id, label, error_id, options, placeholder=""):
+    """Create a standardized dropdown field with compact spacing and inline error."""
     return [
         dbc.Label(label, className="fw-bold mb-0", style={'fontSize': '0.85rem'}),
         html.Div([
@@ -87,10 +103,18 @@ def _create_dropdown_field(field_id, label, options, placeholder=""):
                 id=field_id,
                 options=options,
                 placeholder=placeholder,
-                className="mb-1",
+                className="mb-0",
                 style={'fontSize': '0.9rem'}
             )
-        ], className="dropdown-wrapper")
+        ], className="dropdown-wrapper"),
+        html.Div(id=error_id, className="field-error-message", style={
+            'color': '#dc2626',
+            'fontSize': '0.75rem',
+            'marginTop': '4px',
+            'marginBottom': '8px',
+            'fontWeight': '500',
+            'minHeight': '18px'
+        })
     ]
 
 
@@ -102,46 +126,62 @@ patientLayout = dbc.Container([
                    style={'fontSize': '1.8rem', 'marginBottom': '0.5rem !important'}),
         ], width=12)
     ]),
-# Add this to the TOP of patientLayout.py, before the first column
 
-# Patient Identification Section (add before the five-column row)
-dbc.Row([
-    dbc.Col([
-        dbc.Card([
-            dbc.CardHeader(
-                html.H5("Patient Identification", className="mb-0", 
-                       style={'fontSize': '1rem', 'color': '#1a1d29'}),
-                style={'backgroundColor': '#f1f3f5', 'padding': '8px 10px'}
-            ),
-            dbc.CardBody([
-                dbc.Row([
-                    dbc.Col([
-                        dbc.Label("Patient Name", className="fw-bold mb-0", 
-                                style={'fontSize': '0.85rem'}),
-                        dbc.Input(
-                            id='patient-name',
-                            type='text',
-                            placeholder="Enter patient name",
-                            className="mb-1",
-                            style={'padding': '0.4rem 0.5rem', 'fontSize': '0.9rem'}
-                        )
-                    ], width=6),
-                    dbc.Col([
-                        dbc.Label("Patient ID", className="fw-bold mb-0", 
-                                style={'fontSize': '0.85rem'}),
-                        dbc.Input(
-                            id='patient-id-input',
-                            type='text',
-                            placeholder="Enter unique patient ID",
-                            className="mb-1",
-                            style={'padding': '0.4rem 0.5rem', 'fontSize': '0.9rem'}
-                        )
-                    ], width=6)
-                ])
-            ], style={'padding': '10px'})
-        ], className="mb-3")
-    ], width=12)
-]),
+    # Patient Identification Section
+    dbc.Row([
+        dbc.Col([
+            dbc.Card([
+                dbc.CardHeader(
+                    html.H5("Patient Identification", className="mb-0", 
+                           style={'fontSize': '1rem', 'color': '#1a1d29'}),
+                    style={'backgroundColor': '#f1f3f5', 'padding': '8px 10px'}
+                ),
+                dbc.CardBody([
+                    dbc.Row([
+                        dbc.Col([
+                            dbc.Label("Patient Name", className="fw-bold mb-0", 
+                                    style={'fontSize': '0.85rem'}),
+                            dbc.Input(
+                                id='patient-name',
+                                type='text',
+                                placeholder="Enter patient name",
+                                className="mb-0",
+                                style={'padding': '0.4rem 0.5rem', 'fontSize': '0.9rem'}
+                            ),
+                            html.Div(id='error-patient-name', className="field-error-message", style={
+                                'color': '#dc2626',
+                                'fontSize': '0.75rem',
+                                'marginTop': '2px',
+                                'marginBottom': '8px',
+                                'fontWeight': '500',
+                                'minHeight': '18px'
+                            })
+                        ], width=6),
+                        dbc.Col([
+                            dbc.Label("Patient ID", className="fw-bold mb-0", 
+                                    style={'fontSize': '0.85rem'}),
+                            dbc.Input(
+                                id='patient-id-input',
+                                type='text',
+                                placeholder="Enter unique patient ID",
+                                className="mb-0",
+                                style={'padding': '0.4rem 0.5rem', 'fontSize': '0.9rem'}
+                            ),
+                            html.Div(id='error-patient-id', className="field-error-message", style={
+                                'color': '#dc2626',
+                                'fontSize': '0.75rem',
+                                'marginTop': '2px',
+                                'marginBottom': '8px',
+                                'fontWeight': '500',
+                                'minHeight': '18px'
+                            })
+                        ], width=6)
+                    ])
+                ], style={'padding': '10px'})
+            ], className="mb-3")
+        ], width=12)
+    ]),
+
     # Main Form - Five Columns
     dbc.Row([
         # Column 1 - Personal Info + Measurements
@@ -152,13 +192,13 @@ dbc.Row([
                     style={'backgroundColor': '#f1f3f5', 'padding': '8px 10px'}
                 ),
                 dbc.CardBody([
-                    *_create_input_field('patient-age', 'Age', placeholder="Age", step=1),
-                    *_create_radio_field('patient-sex', 'Sex', RADIO_OPTIONS['sex'], inline=True),
-                    *_create_input_field('patient-trestbps', 'Resting BP (mm Hg)',
+                    *_create_input_field('patient-age', 'Age', 'error-patient-age', placeholder="Age", step=1),
+                    *_create_radio_field('patient-sex', 'Sex', 'error-patient-sex', RADIO_OPTIONS['sex'], inline=True),
+                    *_create_input_field('patient-trestbps', 'Resting BP (mm Hg)', 'error-patient-trestbps',
                                        placeholder="BP", step=1),
-                    *_create_input_field('patient-chol', 'Cholesterol (mg/dl)',
+                    *_create_input_field('patient-chol', 'Cholesterol (mg/dl)', 'error-patient-chol',
                                        placeholder="Cholesterol", step=1),
-                    *_create_input_field('patient-thalachh', 'Max Heart Rate',
+                    *_create_input_field('patient-thalachh', 'Max Heart Rate', 'error-patient-thalachh',
                                        placeholder="Heart Rate", step=1),
                 ], style={'padding': '10px', 'minHeight': '500px'})
             ], className="mb-2", style={'marginBottom': '0.5rem !important'})
@@ -172,8 +212,8 @@ dbc.Row([
                     style={'backgroundColor': '#f1f3f5', 'padding': '8px 10px'}
                 ),
                 dbc.CardBody([
-                    *_create_radio_field('patient-cp', 'Chest Pain Type', RADIO_OPTIONS['cp']),
-                    *_create_radio_field('patient-restecg', 'Resting ECG',
+                    *_create_radio_field('patient-cp', 'Chest Pain Type', 'error-patient-cp', RADIO_OPTIONS['cp']),
+                    *_create_radio_field('patient-restecg', 'Resting ECG', 'error-patient-restecg',
                                        RADIO_OPTIONS['restecg']),
                 ], style={'padding': '10px', 'minHeight': '500px'})
             ], className="mb-2", style={'marginBottom': '0.5rem !important'})
@@ -187,11 +227,11 @@ dbc.Row([
                     style={'backgroundColor': '#f1f3f5', 'padding': '8px 10px'}
                 ),
                 dbc.CardBody([
-                    *_create_input_field('patient-oldpeak', 'ST Depression',
+                    *_create_input_field('patient-oldpeak', 'ST Depression', 'error-patient-oldpeak',
                                        placeholder="ST Depression", step=0.1),
-                    *_create_radio_field('patient-fbs', 'Fasting Blood Sugar > 120',
+                    *_create_radio_field('patient-fbs', 'Fasting Blood Sugar > 120', 'error-patient-fbs',
                                        RADIO_OPTIONS['fbs'], inline=True),
-                    *_create_radio_field('patient-exang', 'Exercise Angina',
+                    *_create_radio_field('patient-exang', 'Exercise Angina', 'error-patient-exang',
                                        RADIO_OPTIONS['exang'], inline=True),
                 ], style={'padding': '10px', 'minHeight': '500px'})
             ], className="mb-2", style={'marginBottom': '0.5rem !important'})
@@ -205,9 +245,9 @@ dbc.Row([
                     style={'backgroundColor': '#f1f3f5', 'padding': '8px 10px'}
                 ),
                 dbc.CardBody([
-                    *_create_radio_field('patient-slope', 'Slope',
+                    *_create_radio_field('patient-slope', 'Slope', 'error-patient-slope',
                                        RADIO_OPTIONS['slope']),
-                    *_create_dropdown_field('patient-ca', 'Major Vessels (0-4)',
+                    *_create_dropdown_field('patient-ca', 'Major Vessels (0-4)', 'error-patient-ca',
                                           DROPDOWN_OPTIONS['ca'],
                                           placeholder="Vessels"),
                 ], style={'padding': '10px', 'minHeight': '500px'})
@@ -222,7 +262,7 @@ dbc.Row([
                     style={'backgroundColor': '#f1f3f5', 'padding': '8px 10px'}
                 ),
                 dbc.CardBody([
-                    *_create_radio_field('patient-thal', 'Thalassemia', RADIO_OPTIONS['thal']),
+                    *_create_radio_field('patient-thal', 'Thalassemia', 'error-patient-thal', RADIO_OPTIONS['thal']),
                 ], style={'padding': '10px', 'minHeight': '500px'})
             ], className="mb-2", style={'marginBottom': '0.5rem !important'})
         ], width=True)

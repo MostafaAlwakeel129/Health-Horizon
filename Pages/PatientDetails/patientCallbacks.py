@@ -73,6 +73,7 @@ def _validate_ranges(inputs):
             if value < min_val or value > max_val:
                 errors.append({
                     'field': field_name,
+                    'field_key': field_key,
                     'value': value,
                     'min': min_val,
                     'max': max_val
@@ -97,8 +98,24 @@ def patientCallbacks(app):
         Output('patient-output', 'children'),
         Output('prediction-store', 'data'),
         Output('field-values-store', 'data'),
-        Output('patient-name', 'value'),  # Clear patient name
-        Output('patient-id-input', 'value'),  # Clear patient ID
+        Output('patient-name', 'value'),
+        Output('patient-id-input', 'value'),
+        # Inline error outputs for each field
+        Output('error-patient-name', 'children'),
+        Output('error-patient-id', 'children'),
+        Output('error-patient-age', 'children'),
+        Output('error-patient-sex', 'children'),
+        Output('error-patient-cp', 'children'),
+        Output('error-patient-trestbps', 'children'),
+        Output('error-patient-chol', 'children'),
+        Output('error-patient-fbs', 'children'),
+        Output('error-patient-restecg', 'children'),
+        Output('error-patient-thalachh', 'children'),
+        Output('error-patient-exang', 'children'),
+        Output('error-patient-oldpeak', 'children'),
+        Output('error-patient-slope', 'children'),
+        Output('error-patient-ca', 'children'),
+        Output('error-patient-thal', 'children'),
         Input('patient-button', 'n_clicks'),
         State('patient-name', 'value'),
         State('patient-id-input', 'value'),
@@ -127,105 +144,56 @@ def patientCallbacks(app):
         print("PREDICTION CALLBACK TRIGGERED")
         print(f"Button clicks: {n_clicks}")
         
+        # Initialize all error messages as empty
+        error_messages = [""] * 15  # 15 fields total (2 patient info + 13 medical)
+        has_errors = False
+        
         # Validate patient name first
         if not patient_name or not patient_name.strip():
-            return (
-                dbc.Alert([
-                    html.H5("Missing Patient Name", className="alert-heading"),
-                    html.P("Please enter the patient's name before submitting.")
-                ], color="danger"),
-                previous_data,
-                None,
-                no_update,  # Don't clear name
-                no_update   # Don't clear ID
-            )
+            error_messages[0] = "⚠️ Required field"
+            has_errors = True
         
         # Validate patient ID
         if not patient_id or not patient_id.strip():
-            return (
-                dbc.Alert([
-                    html.H5("Missing Patient ID", className="alert-heading"),
-                    html.P("Please enter a unique patient ID before submitting.")
-                ], color="danger"),
-                previous_data,
-                None,
-                no_update,  # Don't clear name
-                no_update   # Don't clear ID
-            )
+            error_messages[1] = "⚠️ Required field"
+            has_errors = True
         
         # Collect all inputs
         inputs = [age, sex, cp, trestbps, chol, fbs, restecg, thalachh,
                  exang, oldpeak, slope, ca, thal]
         
-        # Validate both missing fields and ranges
+        # Validate missing fields and ranges
         missing_fields = _validate_inputs(inputs)
         range_errors = _validate_ranges(inputs)
+        
+        # Map missing fields to error messages
+        for i, (field_key, value) in enumerate(zip(FIELD_KEYS, inputs)):
+            if value is None:
+                error_messages[i + 2] = "⚠️ Required field"
+                has_errors = True
+        
+        # Map range errors to error messages
+        for error in range_errors:
+            field_key = error['field_key']
+            if field_key in FIELD_KEYS:
+                idx = FIELD_KEYS.index(field_key) + 2  # +2 to account for name and ID
+                error_messages[idx] = f"⚠️ Range: {error['min']} - {error['max']}"
+                has_errors = True
         
         # Create field values for restoration
         field_values = _create_field_values_dict(age, sex, cp, trestbps, chol, fbs,
                                                 restecg, thalachh, exang, oldpeak,
                                                 slope, ca, thal)
         
-        # If we have BOTH missing fields AND range errors, show combined message
-        if missing_fields and range_errors:
-            # Create missing fields message
-            missing_message = (f"Please fill in the missing field: {missing_fields[0]}"
-                             if len(missing_fields) == 1
-                             else f"Please fill in the missing fields: {', '.join(missing_fields)}")
-            
-            # Create range error messages
-            range_error_messages = [
-                html.P(f'The input for "{error["field"]}" is out of range, please input data in range of {error["min"]} and {error["max"]}')
-                for error in range_errors
-            ]
-            
+        # If there are any errors, return with inline error messages
+        if has_errors:
             return (
-                dbc.Alert([
-                    html.H5("Validation Errors", className="alert-heading"),
-                    html.P(missing_message, className="mb-1"),
-                    html.Hr(className="my-2"),
-                    html.H5("Range Errors:", className="alert-heading mb-1"),
-                    *range_error_messages
-                ], color="danger"),
+                "",  # No main error message
                 previous_data,
                 field_values,
                 no_update,  # Don't clear name
-                no_update   # Don't clear ID
-            )
-        
-        # If only missing fields (no range errors)
-        if missing_fields:
-            message = (f"Please fill in the missing field: {missing_fields[0]}"
-                      if len(missing_fields) == 1
-                      else f"Please fill in the missing fields: {', '.join(missing_fields)}")
-            
-            return (
-                dbc.Alert([
-                    html.H5("Missing Information", className="alert-heading"),
-                    html.P(message)
-                ], color="danger"),
-                previous_data,
-                field_values,
-                no_update,  # Don't clear name
-                no_update   # Don't clear ID
-            )
-        
-        # If only range errors (no missing fields)
-        if range_errors:
-            error_messages = [
-                html.P(f'The input for "{error["field"]}" is out of range, please input data in range of {error["min"]} and {error["max"]}')
-                for error in range_errors
-            ]
-            
-            return (
-                dbc.Alert([
-                    html.H5("Invalid Input Range", className="alert-heading"),
-                    *error_messages
-                ], color="danger"),
-                previous_data,
-                field_values,
-                no_update,  # Don't clear name
-                no_update   # Don't clear ID
+                no_update,  # Don't clear ID
+                *error_messages  # Spread all error messages
             )
         
         # Create patient data dictionary
@@ -246,7 +214,8 @@ def patientCallbacks(app):
                     previous_data,
                     field_values,
                     no_update,  # Don't clear name
-                    no_update   # Don't clear ID
+                    no_update,  # Don't clear ID
+                    *[""] * 15  # Clear all error messages
                 )
         
         # Prepare features for prediction
@@ -268,7 +237,8 @@ def patientCallbacks(app):
                 previous_data,
                 field_values,
                 no_update,  # Don't clear name
-                no_update   # Don't clear ID
+                no_update,  # Don't clear ID
+                *[""] * 15  # Clear all error messages
             )
         
         # Prepare patient data for database storage
@@ -314,7 +284,8 @@ def patientCallbacks(app):
                 },
                 field_values,
                 "",  # Clear patient name
-                ""   # Clear patient ID
+                "",  # Clear patient ID
+                *[""] * 15  # Clear all error messages
             )
         
         # Store prediction results with patient info
@@ -341,7 +312,8 @@ def patientCallbacks(app):
             stored_data,
             field_values,
             "",  # Clear patient name
-            ""   # Clear patient ID
+            "",  # Clear patient ID
+            *[""] * 15  # Clear all error messages
         )
     
     @app.callback(
