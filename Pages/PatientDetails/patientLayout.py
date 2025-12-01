@@ -102,7 +102,46 @@ patientLayout = dbc.Container([
                    style={'fontSize': '1.8rem', 'marginBottom': '0.5rem !important'}),
         ], width=12)
     ]),
-    
+# Add this to the TOP of patientLayout.py, before the first column
+
+# Patient Identification Section (add before the five-column row)
+dbc.Row([
+    dbc.Col([
+        dbc.Card([
+            dbc.CardHeader(
+                html.H5("Patient Identification", className="mb-0", 
+                       style={'fontSize': '1rem', 'color': '#1a1d29'}),
+                style={'backgroundColor': '#f1f3f5', 'padding': '8px 10px'}
+            ),
+            dbc.CardBody([
+                dbc.Row([
+                    dbc.Col([
+                        dbc.Label("Patient Name", className="fw-bold mb-0", 
+                                style={'fontSize': '0.85rem'}),
+                        dbc.Input(
+                            id='patient-name',
+                            type='text',
+                            placeholder="Enter patient name",
+                            className="mb-1",
+                            style={'padding': '0.4rem 0.5rem', 'fontSize': '0.9rem'}
+                        )
+                    ], width=6),
+                    dbc.Col([
+                        dbc.Label("Patient ID", className="fw-bold mb-0", 
+                                style={'fontSize': '0.85rem'}),
+                        dbc.Input(
+                            id='patient-id-input',
+                            type='text',
+                            placeholder="Enter unique patient ID",
+                            className="mb-1",
+                            style={'padding': '0.4rem 0.5rem', 'fontSize': '0.9rem'}
+                        )
+                    ], width=6)
+                ])
+            ], style={'padding': '10px'})
+        ], className="mb-3")
+    ], width=12)
+]),
     # Main Form - Five Columns
     dbc.Row([
         # Column 1 - Personal Info + Measurements

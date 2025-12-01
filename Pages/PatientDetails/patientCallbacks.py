@@ -1,6 +1,6 @@
 """
 Patient Details Callbacks
-Handles patient input, validation, prediction, and field preservation.
+Handles patient input, validation, prediction, field preservation, and database storage.
 """
 
 from dash.dependencies import Input, Output, State
@@ -8,6 +8,7 @@ from dash import html
 import dash_bootstrap_components as dbc
 from dash import no_update
 from utils.model_utils import predictor
+from utils.db_utils import db_manager
 
 # Field names for validation messages
 FIELD_NAMES = [
@@ -97,6 +98,8 @@ def patientCallbacks(app):
         Output('prediction-store', 'data'),
         Output('field-values-store', 'data'),
         Input('patient-button', 'n_clicks'),
+        State('patient-name', 'value'),
+        State('patient-id-input', 'value'),
         State('patient-age', 'value'),
         State('patient-sex', 'value'),
         State('patient-cp', 'value'),
@@ -113,14 +116,36 @@ def patientCallbacks(app):
         State('prediction-store', 'data'),
         prevent_initial_call=True
     )
-    def predict_heart_disease(n_clicks, age, sex, cp, trestbps, chol, fbs,
-                             restecg, thalachh, exang, oldpeak, slope, ca, thal, 
-                             previous_data):
-        """Handle prediction request with validation and duplicate check."""
+    def predict_heart_disease(n_clicks, patient_name, patient_id, age, sex, cp, 
+                             trestbps, chol, fbs, restecg, thalachh, exang, 
+                             oldpeak, slope, ca, thal, previous_data):
+        """Handle prediction request with validation, duplicate check, and database storage."""
         
         print("=" * 50)
         print("PREDICTION CALLBACK TRIGGERED")
         print(f"Button clicks: {n_clicks}")
+        
+        # Validate patient name first
+        if not patient_name or not patient_name.strip():
+            return (
+                dbc.Alert([
+                    html.H5("Missing Patient Name", className="alert-heading"),
+                    html.P("Please enter the patient's name before submitting.")
+                ], color="danger"),
+                previous_data,
+                None
+            )
+        
+        # Validate patient ID
+        if not patient_id or not patient_id.strip():
+            return (
+                dbc.Alert([
+                    html.H5("Missing Patient ID", className="alert-heading"),
+                    html.P("Please enter a unique patient ID before submitting.")
+                ], color="danger"),
+                previous_data,
+                None
+            )
         
         # Collect all inputs
         inputs = [age, sex, cp, trestbps, chol, fbs, restecg, thalachh,
@@ -198,7 +223,8 @@ def patientCallbacks(app):
         
         # Check for duplicate submission
         if previous_data and 'patient_data' in previous_data:
-            if previous_data['patient_data'] == current_submission:
+            if (previous_data['patient_data'] == current_submission and 
+                previous_data.get('patient_id') == patient_id.strip()):
                 print("Duplicate submission detected")
                 return (
                     dbc.Alert([
@@ -229,22 +255,70 @@ def patientCallbacks(app):
                 field_values
             )
         
-        # Store prediction results
+        # Prepare patient data for database storage
+        patient_data_for_db = {
+            'patient_name': patient_name.strip(),
+            'patient_id': patient_id.strip(),
+            'age': age,
+            'sex': sex,
+            'cp': cp,
+            'trestbps': trestbps,
+            'chol': chol,
+            'fbs': fbs,
+            'restecg': restecg,
+            'thalachh': thalachh,
+            'exang': exang,
+            'oldpeak': oldpeak,
+            'slope': slope,
+            'ca': ca,
+            'thal': thal
+        }
+        
+        # Save to database
+        print("Attempting to save assessment to database...")
+        save_success = db_manager.save_patient_assessment(patient_data_for_db, result)
+        
+        if not save_success:
+            print("WARNING: Failed to save assessment to database")
+            # Show warning but still display results
+            return (
+                dbc.Alert([
+                    html.H5("Prediction Complete (Database Warning)", className="alert-heading"),
+                    html.P(f"Risk Level: {result['risk_level']}"),
+                    html.P("Note: Assessment could not be saved to history database."),
+                    html.P("Scroll down to view detailed results...")
+                ], color="warning"),
+                {
+                    'prediction': result['prediction'],
+                    'risk_probability': result['risk_probability'],
+                    'risk_level': result['risk_level'],
+                    'patient_data': current_submission,
+                    'patient_name': patient_name.strip(),
+                    'patient_id': patient_id.strip()
+                },
+                field_values
+            )
+        
+        # Store prediction results with patient info
         stored_data = {
             'prediction': result['prediction'],
             'risk_probability': result['risk_probability'],
             'risk_level': result['risk_level'],
-            'patient_data': current_submission
+            'patient_data': current_submission,
+            'patient_name': patient_name.strip(),
+            'patient_id': patient_id.strip()
         }
         
         print(f"Prediction complete: {stored_data['risk_level']}")
+        print("Assessment saved to database successfully!")
         print("=" * 50)
         
         return (
             dbc.Alert([
                 html.H5("Prediction Complete!", className="alert-heading"),
+                html.P(f"Patient: {patient_name.strip()} (ID: {patient_id.strip()})"),
                 html.P(f"Risk Level: {result['risk_level']}"),
-                html.P("Scroll down to view detailed results...")
+                html.P("Assessment saved to history. Scroll down to view detailed results...")
             ], color="success"),
             stored_data,
             field_values
