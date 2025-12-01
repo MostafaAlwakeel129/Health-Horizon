@@ -37,25 +37,33 @@ app.layout = html.Div([
     dcc.Store(id='prediction-store', storage_type='session'),
     dcc.Store(id='field-values-store', storage_type='session'),
     
-    # Floating Dashboard Toggle Button
+    # Floating Dashboard Toggle Button (Hamburger Menu Style)
     html.Button([
-        html.I(className="bi bi-clock-history", style={'fontSize': '1.5rem'}),
+        html.Div([
+            html.Div(className="hamburger-line"),
+            html.Div(className="hamburger-line"),
+            html.Div(className="hamburger-line")
+        ], className="hamburger-icon")
     ], id="open-history-dashboard", 
        className="floating-dashboard-btn",
        style={
            'position': 'fixed',
            'right': '30px',
-           'top': '50%',
-           'transform': 'translateY(-50%)',
+           'top': '30px',
            'zIndex': '1000',
            'backgroundColor': '#4f46e5',
            'color': 'white',
            'border': 'none',
            'borderRadius': '12px',
-           'padding': '15px 20px',
+           'padding': '12px 15px',
            'cursor': 'pointer',
            'boxShadow': '0 4px 12px rgba(79, 70, 229, 0.4)',
-           'transition': 'all 0.3s ease'
+           'transition': 'all 0.3s ease',
+           'width': '50px',
+           'height': '50px',
+           'display': 'flex',
+           'alignItems': 'center',
+           'justifyContent': 'center'
        }),
     
     # Offcanvas Dashboard (Right Side Panel)

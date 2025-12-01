@@ -97,6 +97,8 @@ def patientCallbacks(app):
         Output('patient-output', 'children'),
         Output('prediction-store', 'data'),
         Output('field-values-store', 'data'),
+        Output('patient-name', 'value'),  # Clear patient name
+        Output('patient-id-input', 'value'),  # Clear patient ID
         Input('patient-button', 'n_clicks'),
         State('patient-name', 'value'),
         State('patient-id-input', 'value'),
@@ -133,7 +135,9 @@ def patientCallbacks(app):
                     html.P("Please enter the patient's name before submitting.")
                 ], color="danger"),
                 previous_data,
-                None
+                None,
+                no_update,  # Don't clear name
+                no_update   # Don't clear ID
             )
         
         # Validate patient ID
@@ -144,7 +148,9 @@ def patientCallbacks(app):
                     html.P("Please enter a unique patient ID before submitting.")
                 ], color="danger"),
                 previous_data,
-                None
+                None,
+                no_update,  # Don't clear name
+                no_update   # Don't clear ID
             )
         
         # Collect all inputs
@@ -182,7 +188,9 @@ def patientCallbacks(app):
                     *range_error_messages
                 ], color="danger"),
                 previous_data,
-                field_values
+                field_values,
+                no_update,  # Don't clear name
+                no_update   # Don't clear ID
             )
         
         # If only missing fields (no range errors)
@@ -197,7 +205,9 @@ def patientCallbacks(app):
                     html.P(message)
                 ], color="danger"),
                 previous_data,
-                field_values
+                field_values,
+                no_update,  # Don't clear name
+                no_update   # Don't clear ID
             )
         
         # If only range errors (no missing fields)
@@ -213,7 +223,9 @@ def patientCallbacks(app):
                     *error_messages
                 ], color="danger"),
                 previous_data,
-                field_values
+                field_values,
+                no_update,  # Don't clear name
+                no_update   # Don't clear ID
             )
         
         # Create patient data dictionary
@@ -232,7 +244,9 @@ def patientCallbacks(app):
                         html.P("Patient already diagnosed and results are displayed below.")
                     ], color="warning"),
                     previous_data,
-                    field_values
+                    field_values,
+                    no_update,  # Don't clear name
+                    no_update   # Don't clear ID
                 )
         
         # Prepare features for prediction
@@ -252,7 +266,9 @@ def patientCallbacks(app):
                     html.P("There was an error making the prediction. Please check the terminal for details.")
                 ], color="danger"),
                 previous_data,
-                field_values
+                field_values,
+                no_update,  # Don't clear name
+                no_update   # Don't clear ID
             )
         
         # Prepare patient data for database storage
@@ -296,7 +312,9 @@ def patientCallbacks(app):
                     'patient_name': patient_name.strip(),
                     'patient_id': patient_id.strip()
                 },
-                field_values
+                field_values,
+                "",  # Clear patient name
+                ""   # Clear patient ID
             )
         
         # Store prediction results with patient info
@@ -321,7 +339,9 @@ def patientCallbacks(app):
                 html.P("Assessment saved to history. Scroll down to view detailed results...")
             ], color="success"),
             stored_data,
-            field_values
+            field_values,
+            "",  # Clear patient name
+            ""   # Clear patient ID
         )
     
     @app.callback(

@@ -1482,3 +1482,114 @@ html::before, body::before {
         display: none;
     }
 }
+
+/* Add this to your existing custom.css file - HAMBURGER MENU STYLES */
+
+/* ============================================
+   HAMBURGER MENU BUTTON
+   ============================================ */
+
+.floating-dashboard-btn {
+    position: fixed;
+    right: 30px;
+    top: 30px;
+    z-index: 1000;
+    background-color: #4f46e5 !important;
+    color: white;
+    border: none !important;
+    border-radius: 12px !important;
+    padding: 12px 15px !important;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.4);
+    transition: all 0.3s ease;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.floating-dashboard-btn:hover {
+    background-color: #4338ca !important;
+    box-shadow: 0 6px 16px rgba(79, 70, 229, 0.6);
+    transform: scale(1.05);
+}
+
+.floating-dashboard-btn:active {
+    transform: scale(0.95);
+}
+
+.hamburger-icon {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    width: 24px;
+    height: 18px;
+    justify-content: center;
+}
+
+.hamburger-line {
+    width: 100%;
+    height: 3px;
+    background-color: white;
+    border-radius: 2px;
+    transition: all 0.3s ease;
+}
+
+.floating-dashboard-btn:hover .hamburger-line {
+    background-color: #e0e7ff;
+}
+
+/* Animate hamburger to X when active */
+.floating-dashboard-btn.active .hamburger-line:nth-child(1) {
+    transform: rotate(45deg) translateY(8px);
+}
+
+.floating-dashboard-btn.active .hamburger-line:nth-child(2) {
+    opacity: 0;
+}
+
+.floating-dashboard-btn.active .hamburger-line:nth-child(3) {
+    transform: rotate(-45deg) translateY(-8px);
+}
+
+/* Mobile responsiveness for hamburger */
+@media (max-width: 768px) {
+    .floating-dashboard-btn {
+        right: 20px;
+        top: 20px;
+        width: 45px;
+        height: 45px;
+        padding: 10px 12px !important;
+    }
+    
+    .hamburger-icon {
+        width: 22px;
+        height: 16px;
+        gap: 3px;
+    }
+    
+    .hamburger-line {
+        height: 2.5px;
+    }
+}
+
+@media (max-width: 576px) {
+    .floating-dashboard-btn {
+        right: 15px;
+        top: 15px;
+        width: 42px;
+        height: 42px;
+        padding: 9px 11px !important;
+        border-radius: 10px !important;
+    }
+    
+    .hamburger-icon {
+        width: 20px;
+        height: 14px;
+    }
+    
+    .hamburger-line {
+        height: 2px;
+    }
+}

@@ -16,10 +16,11 @@ def historyCallbacks(app):
         Input('search-button', 'n_clicks'),
         Input('show-all-button', 'n_clicks'),
         Input('history-refresh-interval', 'n_intervals'),
+        Input('prediction-store', 'data'),  # Add this to trigger on new predictions
         State('search-input', 'value'),
         prevent_initial_call=False
     )
-    def update_history_table(search_clicks, show_all_clicks, n_intervals, search_term):
+    def update_history_table(search_clicks, show_all_clicks, n_intervals, prediction_data, search_term):
         """Update the history table based on search or show all"""
         
         # Determine which button was clicked
